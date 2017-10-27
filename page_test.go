@@ -23,7 +23,7 @@ func TestHomePage(t *testing.T) {
 		expect(t, "home.md", homePage.FileName())
 	}
 
-	if homePage.Path(testConfig()) != "home.md" {
+	if homePage.Path(testConfig()) != "/var/www/wiki/home.md" {
 		expect(t, "/var/www/wiki/home.md", homePage.Path(testConfig()))
 	}
 }

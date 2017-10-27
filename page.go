@@ -29,5 +29,5 @@ func (p *Page) FileName() string {
 }
 
 func (p *Page) Path(cfg *Config) string {
-	return ""
+	return cfg.Path(p.FileName())
 }
