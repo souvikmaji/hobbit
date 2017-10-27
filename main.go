@@ -1,11 +1,20 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"flag"
+)
+
+
+var (
+	host = flag.String("b", "0.0.0.0", "bind to address")
+	port = flag.Int("p", 8080, "listen PORT")
+)
 
 func main() {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.String(200, "Hello world!")
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080
+	flag.Parse()
+	cfg := &Config {
+		Host: *host,
+		Port: *port,
+	}
+	StartServer(cfg)
 }
