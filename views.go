@@ -1,6 +1,5 @@
 package main
 
-
 const LAYOUT = `
 <!DOCTYPE html>
 <html lang="en">

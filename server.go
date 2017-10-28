@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func StartServer(cfg *Config) {
-	r := gin.Default()
-	setupRoutes(r)
-	r.Run(cfg.Addr())
+	http.ListenAndServe(cfg.Addr(), setupRoutes())
 }

@@ -1,9 +1,9 @@
+//go:generate go-bindata -o assets.go assets/...
 package main
 
 import (
 	"flag"
 )
-
 
 var (
 	host = flag.String("b", "0.0.0.0", "bind to address")
@@ -12,7 +12,7 @@ var (
 
 func main() {
 	flag.Parse()
-	cfg := &Config {
+	cfg := &Config{
 		Host: *host,
 		Port: *port,
 	}
