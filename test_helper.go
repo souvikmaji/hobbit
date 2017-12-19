@@ -11,7 +11,6 @@ const EmptyString = ""
 func testConfig() *Config {
 	return &Config{
 		RepositoryRoot: "/var/www/wiki",
-		Title:          "Wiki",
 	}
 }
 

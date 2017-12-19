@@ -13,8 +13,9 @@ var (
 func main() {
 	flag.Parse()
 	cfg := &Config{
-		Host: *host,
-		Port: *port,
+		RepositoryRoot: "/Users/shreya/.gopkg/src/github.com/souvikmaji/hobbit/test",
+		Host:           *host,
+		Port:           *port,
 	}
 	StartServer(cfg)
 }

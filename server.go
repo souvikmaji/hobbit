@@ -5,5 +5,5 @@ import (
 )
 
 func StartServer(cfg *Config) {
-	http.ListenAndServe(cfg.Addr(), setupRoutes())
+	http.ListenAndServe(cfg.Addr(), setupRoutes(cfg))
 }

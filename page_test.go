@@ -5,9 +5,9 @@ import (
 )
 
 func TestHomePage(t *testing.T) {
-	homePage := NewHomePage()
+	homePage := NewHomePage("Home", "")
 
-	if homePage.Title != "Home" {
+	if homePage.Filepath != "Home" {
 		expect(t, "Home", homePage.Title)
 	}
 
