@@ -8,7 +8,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 )
 
 type Page struct {
@@ -43,11 +42,12 @@ func (p *Page) Save(cfg *Config) error {
 		return err
 	}
 	log.Println("written Successfully!!!")
+	//Git add and commit
 	return nil
 }
 
 func (p *Page) Title() string {
-	return strings.Split(p.Filepath, "/")[len(strings.Split(p.Filepath, "/"))-1]
+	return path.Base(p.Filepath)
 }
 
 func (p *Page) Dir(cfg *Config) string {
