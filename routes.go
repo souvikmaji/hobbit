@@ -76,7 +76,7 @@ func createPageHandler(w http.ResponseWriter, r *http.Request) {
 	p := NewHomePage(vars["page"], r.PostFormValue("content"))
 	err = p.Save(cfg)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 }
 

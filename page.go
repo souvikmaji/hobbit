@@ -41,6 +41,10 @@ func (p *Page) Save(cfg *Config) error {
 	if err != nil {
 		return err
 	}
+	err = gitCommit(p)
+	if err != nil {
+		return err
+	}
 	log.Println("written Successfully!!!")
 	//Git add and commit
 	return nil
@@ -60,4 +64,8 @@ func (p *Page) FileName() string {
 
 func (p *Page) Path(cfg *Config) string {
 	return filepath.Join(p.Dir(cfg), p.FileName())
+}
+
+func (p *Page) RelativePath() string {
+	return filepath.Join(path.Dir(p.Filepath), p.FileName())
 }

@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"log"
 )
 
 var (
@@ -11,6 +12,7 @@ var (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	flag.Parse()
 	cfg := &Config{
 		RepositoryRoot: "/Users/shreya/.gopkg/src/github.com/souvikmaji/hobbit/test",
