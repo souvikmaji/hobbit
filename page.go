@@ -13,12 +13,14 @@ import (
 type Page struct {
 	Filepath string
 	Content  string
+	Comment  string
 }
 
-func NewHomePage(filepath string, content string) *Page {
+func NewHomePage(filepath, content, comment string) *Page {
 	return &Page{
 		Filepath: filepath,
 		Content:  content,
+		Comment:  comment,
 	}
 }
 
@@ -28,14 +30,23 @@ func (p *Page) Html() string {
 
 func (p *Page) Save(cfg *Config) error {
 	if os.MkdirAll(p.Dir(cfg), 0777) != nil {
-		return errors.New("Unable to create directory for wiki!")
+		return errors.New("Unable to create directory for wiki")
 	}
-	fileOut, err := os.Create(p.Path(cfg))
-	if err != nil {
+	var err error
+	_, err = os.Stat(p.Path(cfg))
+	var fileOut *os.File
+	// create file if not exists
+	if os.IsNotExist(err) {
+		fileOut, err = os.Create(p.Path(cfg))
+		if err != nil {
+			return err
+		}
+		fmt.Println("Successfully created file")
+		fileOut.Close()
+	} else if err != nil {
 		return err
 	}
-	fmt.Println("Successfully created file")
-	defer fileOut.Close()
+
 	content := []byte(p.Content)
 	err = ioutil.WriteFile(p.Path(cfg), content, 0644)
 	if err != nil {
@@ -46,7 +57,6 @@ func (p *Page) Save(cfg *Config) error {
 		return err
 	}
 	log.Println("written Successfully!!!")
-	//Git add and commit
 	return nil
 }
 

@@ -12,7 +12,6 @@ import (
 func gitCommit(p *Page) error {
 
 	// Opens an already existent repository.
-	fmt.Println(cfg.RepositoryRoot)
 	r, err := git.PlainOpen(cfg.RepositoryRoot)
 	if err != nil {
 		log.Println(err)
@@ -39,7 +38,7 @@ func gitCommit(p *Page) error {
 
 	fmt.Println(status)
 
-	commit, err := w.Commit("example go-git commit", &git.CommitOptions{
+	commit, err := w.Commit(p.Comment, &git.CommitOptions{
 		Author: &object.Signature{
 			Name:  "John Doe",
 			Email: "john@doe.org",

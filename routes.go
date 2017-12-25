@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/russross/blackfriday"
@@ -34,6 +35,16 @@ var templateText string = `
 
 <body>
   {{.Body | markDown}}
+</body>
+`
+
+var editText string = `
+<head>
+  <title>{{.Title}}</title>
+</head>
+
+<body>
+  {{.Body}}
 </body>
 `
 
@@ -64,6 +75,7 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func newPageHandler(w http.ResponseWriter, r *http.Request) {
+	//UI GOES HERE
 	log.Println("newPageHandler")
 }
 
@@ -73,7 +85,7 @@ func createPageHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	vars := mux.Vars(r)
-	p := NewHomePage(vars["page"], r.PostFormValue("content"))
+	p := NewHomePage(vars["page"], r.PostFormValue("content"), r.PostFormValue("comment"))
 	err = p.Save(cfg)
 	if err != nil {
 		log.Fatal(err)
@@ -81,11 +93,45 @@ func createPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func editPageHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("editPageHandler")
+
+	err := r.ParseForm()
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+	vars := mux.Vars(r)
+	b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+	data := struct {
+		Title string
+		Body  string
+	}{
+		strings.Split(vars["page"], "/")[len(strings.Split(vars["page"], "/"))-1],
+		string(b),
+	}
+	tmpl := template.Must(template.New("edit.html").Parse(editText))
+
+	err = tmpl.ExecuteTemplate(w, "edit.html", data)
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
 }
 
 func updatePageHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("updatePageHandler")
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println(err)
+	}
+	vars := mux.Vars(r)
+	p := NewHomePage(vars["page"], r.PostFormValue("content"), r.PostFormValue("comment"))
+	err = p.Save(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func setupRoutes(c *Config) http.Handler {
