@@ -1,0 +1,18 @@
+<h1> Create New Page </h1>
+<hr/>
+<div class="card" style="background-color: #fafafa;">
+  <div class="card-block">
+    <h3 class="card-title">{{.}}</h3>
+    <form action="/create/{{.}}" method="POST">
+      <div class="form-group">
+        <textarea rows="5" name="content" class="form-control"></textarea>
+      </div>
+
+      <div class="form-group">
+        <input name="comment" class="form-control" value="Created {{.}}"></input>
+      </div>
+
+      <button type="submit" class="btn btn-primary"> Save </button>
+    </form>
+  </div>
+</div>
