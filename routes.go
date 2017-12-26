@@ -121,6 +121,23 @@ func editPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func historyPageHandler(w http.ResponseWriter, r *http.Request) {
+
+	err := r.ParseForm()
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+	vars := mux.Vars(r)
+	p := NewHomePage(vars["page"], "", "")
+	err = getGitHistory(p)
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+
+}
+
 func updatePageHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -141,6 +158,7 @@ func setupRoutes(c *Config) http.Handler {
 	r.HandleFunc("/create/{page:.*}", newPageHandler).Methods("GET")
 	r.HandleFunc("/edit/{page:.*}", editPageHandler).Methods("GET")
 	r.HandleFunc("/edit/{page:.*}", updatePageHandler).Methods("POST")
+	r.HandleFunc("/history/{page:.*}", historyPageHandler).Methods("GET")
 	r.HandleFunc("/{page:.*}", pageHandler).Methods("GET")
 	r.HandleFunc("/", rootHandler).Methods("GET")
 

@@ -15,7 +15,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	flag.Parse()
 	cfg := &Config{
-		RepositoryRoot: "/Users/shreya/.gopkg/src/github.com/souvikmaji/hobbit/test",
+		RepositoryRoot: "/Users/shreya/.gopkg/src/github.com/souvikmaji/hobbit/hobbit_test",
 		Host:           *host,
 		Port:           *port,
 	}
