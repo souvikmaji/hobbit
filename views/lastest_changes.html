@@ -1,7 +1,6 @@
 <div>
-  <div style="display: inline-block"><h2>History for {{.Title}}</h2></div>
-  <a class="btn btn-primary btn-sm float-right title-button" href="/edit/{{.Title}}">Edit</a>
-  <a class="btn btn-primary btn-sm float-right title-button" href="/{{.Title}}">View Page</a>
+  <div style="display: inline-block"><h2>Latest Changes (Globally)</h2></div>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/">Home</a>
 </div>
 
 <hr/>
@@ -16,9 +15,9 @@
     </tr>
   </thead>
   <tbody>
-    {{ range .Histories}}
+    {{ range .}}
     <tr>
-      <th scope="row">{{.Name}}</th>
+      <th>{{.Name}}</th>
       <td>{{.Message}}</td>
       <td>{{.ShortHash}}</td>
       <td>{{.Time}}</td>

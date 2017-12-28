@@ -32,7 +32,7 @@ func main() {
 	})
 
 	config := &Config{
-		RepositoryRoot: "/Users/shreya/.gopkg/src/github.com/souvikmaji/hobbit/hobbit_test",
+		RepositoryRoot: "/Users/pratik/.gopkg/src/github.com/souvikmaji/hobbit/hobbit_test",
 		Host:           *host,
 		Port:           *port,
 	}

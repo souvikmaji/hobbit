@@ -102,30 +102,36 @@ func updatePageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func historyPageHandler(w http.ResponseWriter, r *http.Request) {
-
 	err := r.ParseForm()
 	if err != nil {
-		rootHandler(w, r)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	vars := mux.Vars(r)
 	p := NewHomePage(vars["page"], "", "")
 	histories, err := getGitHistory(p)
 	if err != nil {
-		rootHandler(w, r)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(histories)
 
+	data := struct {
+		Title     string
+		Histories []*History
+	}{
+		vars["page"],
+		histories,
+	}
+	renderer.HTML(w, http.StatusOK, "history_page", data)
 }
 
 func latestChangesHandler(w http.ResponseWriter, r *http.Request) {
 	logs, err := getGitLog()
 	if err != nil {
-		rootHandler(w, r)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(logs)
+	renderer.HTML(w, http.StatusOK, "lastest_changes", logs)
 }
 
 func pagesHandler(w http.ResponseWriter, r *http.Request) {
