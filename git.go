@@ -72,22 +72,29 @@ func gitCommit(p *Page) error {
 	return nil
 }
 
-func getGitHistory(p *Page) ([]*History, error) {
-
+func configureGit() (object.CommitIter, *git.Repository, error) {
 	// We open the repository at given directory
 	r, err := git.PlainOpen(cfg.RepositoryRoot)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, nil, err
 	}
 
 	ref, err := r.Head()
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, nil, err
 	}
-
 	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
+	if err != nil {
+		log.Println(err)
+		return nil, nil, err
+	}
+	return cIter, r, nil
+}
+
+func getGitHistory(p *Page) ([]*History, error) {
+	cIter, r, err := configureGit()
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -105,6 +112,33 @@ func getGitHistory(p *Page) ([]*History, error) {
 		})
 		return nil
 	}))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return histories, nil
+}
+
+func getGitLog() ([]*History, error) {
+
+	cIter, _, err := configureGit()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	var histories []*History
+
+	err = cIter.ForEach(func(c *object.Commit) error {
+		y, m, d := c.Author.When.Date()
+		histories = append(histories, &History{
+			c.Hash.String()[:7],
+			c.Message,
+			c.Author.Email,
+			c.Author.Name,
+			fmt.Sprintf("%d %s,%d", d, time.Month(m).String(), y),
+		})
+		return nil
+	})
 	if err != nil {
 		log.Println(err)
 		return nil, err

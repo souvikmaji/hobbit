@@ -118,3 +118,12 @@ func historyPageHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(histories)
 
 }
+
+func latestChangesHandler(w http.ResponseWriter, r *http.Request) {
+	logs, err := getGitLog()
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+	fmt.Println(logs)
+}
