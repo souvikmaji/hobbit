@@ -18,7 +18,9 @@ func setupRoutes(c *Config) http.Handler {
 	r.HandleFunc("/edit/{page:.*}", updatePageHandler).Methods("POST")
 	r.HandleFunc("/history/{page:.*}", historyPageHandler).Methods("GET")
 	r.HandleFunc("/latest_changes", latestChangesHandler).Methods("GET")
-	r.HandleFunc("/{page:.*}", pageHandler).Methods("GET")
+	r.HandleFunc("/pages", pagesHandler).Methods("GET")
+	r.HandleFunc("/pages/{page:.*}", pageHandler).Methods("GET")
+	r.HandleFunc("/{page:.*}", detailHandler).Methods("GET")
 
 	return r
 }

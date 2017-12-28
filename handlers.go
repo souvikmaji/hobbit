@@ -41,7 +41,7 @@ func createPageHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/%s", vars["page"]), http.StatusFound)
 }
 
-func pageHandler(w http.ResponseWriter, r *http.Request) {
+func detailHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
 	if err != nil {
@@ -126,4 +126,34 @@ func latestChangesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(logs)
+}
+
+func pagesHandler(w http.ResponseWriter, r *http.Request) {
+	pages, err := getPages()
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+	for _, page := range pages {
+		fmt.Printf("%#v", page)
+	}
+
+}
+
+func pageHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+	vars := mux.Vars(r)
+	pages, err := getPage(vars["page"])
+	if err != nil {
+		rootHandler(w, r)
+		return
+	}
+	for _, page := range pages {
+		fmt.Printf("%#v", page)
+	}
+
 }
