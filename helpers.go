@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 )
 
 type GitPage struct {
@@ -13,7 +13,7 @@ type GitPage struct {
 }
 
 func getPages() ([]*GitPage, error) {
-	files, err := ioutil.ReadDir("/Users/shreya/.gopkg/src/github.com/souvikmaji/hobbit/hobbit_test")
+	files, err := ioutil.ReadDir(cfg.RepositoryRoot)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -29,7 +29,7 @@ func getPages() ([]*GitPage, error) {
 }
 
 func getPage(entity string) ([]*GitPage, error) {
-	files, err := ioutil.ReadDir(fmt.Sprintf("/Users/shreya/.gopkg/src/github.com/souvikmaji/hobbit/hobbit_test/%s", entity))
+	files, err := ioutil.ReadDir(filepath.Join(cfg.RepositoryRoot, entity))
 	if err != nil {
 		log.Println(err)
 		return nil, err
