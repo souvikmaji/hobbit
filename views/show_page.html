@@ -1,6 +1,14 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">{{.Title}}</a>
-</nav>
+<div>
+  <div style="display: inline-block"><h1>{{.Title}}</h1></div>
+  <a class="btn btn-primary float-right title-button" href="#">Latest Changes</a>
+  <a class="btn btn-primary float-right title-button" href="#">History</a>
+  <a class="btn btn-primary float-right title-button" href="/edit/{{.Title}}">Edit</a>
+  <a class="btn btn-primary float-right title-button" href="#">Rename</a>
+  <a class="btn btn-primary float-right title-button" href="#" id="new-page">New</a>
+  <a class="btn btn-primary float-right title-button" href="#">All</a>
+  <a class="btn btn-primary float-right title-button" href="#">Home</a>
+</div>
+
 <hr/>
 <div class="card">
   <div class="card-block">
@@ -8,3 +16,49 @@
   </div>
 </div>
 <hr/>
+
+<div class="modal fade" id="new-page-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create New Page</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Page Name</label>
+          <input class="form-control" id="new-page-name"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="new-page-submit">OK</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('#new-page').off('click').on('click', function () {
+      $('#new-page-modal').modal('show');
+  });
+
+  $('#new-page-submit').off('click').on('click', function () {
+      var newPageName = $("#new-page-name").val();
+      if ($.trim(newPageName) == '') {
+        return false;
+      }
+      $('#new-page-modal').modal('hide');
+      window.location.href= "/create/" + newPageName;
+  });
+
+</script>
+
+
+<style>
+  .title-button {
+    margin-left: 8px;
+  }
+</style>

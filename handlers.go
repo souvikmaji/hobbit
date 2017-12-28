@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -31,12 +29,14 @@ func createPageHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	vars := mux.Vars(r)
 	p := NewHomePage(vars["page"], r.PostFormValue("content"), r.PostFormValue("comment"))
 	err = p.Save(cfg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	http.Redirect(w, r, fmt.Sprintf("/%s", vars["page"]), http.StatusFound)
 }
@@ -45,7 +45,8 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
 	if err != nil {
-		fmt.Print(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	data := struct {
@@ -63,13 +64,13 @@ func editPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		rootHandler(w, r)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	vars := mux.Vars(r)
 	b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
 	if err != nil {
-		rootHandler(w, r)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	data := struct {
@@ -79,26 +80,25 @@ func editPageHandler(w http.ResponseWriter, r *http.Request) {
 		strings.Split(vars["page"], "/")[len(strings.Split(vars["page"], "/"))-1],
 		string(b),
 	}
-	tmpl := template.Must(template.New("edit.html").Parse(editText))
 
-	err = tmpl.ExecuteTemplate(w, "edit.html", data)
-	if err != nil {
-		rootHandler(w, r)
-		return
-	}
+	renderer.HTML(w, http.StatusOK, "edit_page", data)
 }
 
 func updatePageHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	vars := mux.Vars(r)
 	p := NewHomePage(vars["page"], r.PostFormValue("content"), r.PostFormValue("comment"))
 	err = p.Save(cfg)
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	http.Redirect(w, r, fmt.Sprintf("/%s", vars["page"]), http.StatusFound)
 }
 
 func historyPageHandler(w http.ResponseWriter, r *http.Request) {
