@@ -11,6 +11,14 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
+type History struct {
+	ShortHash string
+	Message   string
+	Email     string
+	Name      string
+	Time      string
+}
+
 func gitCommit(p *Page) error {
 
 	// Opens an already existent repository.
@@ -64,38 +72,44 @@ func gitCommit(p *Page) error {
 	return nil
 }
 
-func getGitHistory(p *Page) error {
+func getGitHistory(p *Page) ([]*History, error) {
 
 	// We open the repository at given directory
 	r, err := git.PlainOpen(cfg.RepositoryRoot)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	ref, err := r.Head()
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
-
+	var histories []*History
 	// ... just iterates over the commits, printing it
 	err = cIter.ForEach(filterByChangesToPath(r, p.RelativePath(), func(c *object.Commit) error {
 		y, m, d := c.Author.When.Date()
-		fmt.Println(c.Hash.String()[:7], c.Message, c.Author.Email, c.Author.Name, fmt.Sprintf("%d %s,%d", d, time.Month(m).String(), y))
+		histories = append(histories, &History{
+			c.Hash.String()[:7],
+			c.Message,
+			c.Author.Email,
+			c.Author.Name,
+			fmt.Sprintf("%d %s,%d", d, time.Month(m).String(), y),
+		})
 		return nil
 	}))
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
-	return nil
+	return histories, nil
 }
 
 type memo map[plumbing.Hash]plumbing.Hash

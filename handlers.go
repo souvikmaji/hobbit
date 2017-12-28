@@ -110,10 +110,11 @@ func historyPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	vars := mux.Vars(r)
 	p := NewHomePage(vars["page"], "", "")
-	err = getGitHistory(p)
+	histories, err := getGitHistory(p)
 	if err != nil {
 		rootHandler(w, r)
 		return
 	}
+	fmt.Println(histories)
 
 }
