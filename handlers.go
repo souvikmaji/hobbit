@@ -22,7 +22,17 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 func newPageHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	renderer.HTML(w, http.StatusOK, "new_page", vars["page"])
+	splat := strings.Split(vars["page"], "/")
+	data := struct {
+		FileName     string
+		Dir          string
+		AbsolutePath string
+	}{
+		splat[len(splat)-1],
+		fmt.Sprintf("/%s", strings.Join(splat[:len(splat)-1], "/")),
+		splat[len(splat)-1],
+	}
+	renderer.HTML(w, http.StatusOK, "new_page", data)
 }
 
 func createPageHandler(w http.ResponseWriter, r *http.Request) {
