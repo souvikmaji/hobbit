@@ -17,6 +17,7 @@ type History struct {
 	Email     string
 	Name      string
 	Time      string
+	TimeStamp string
 }
 
 func gitCommit(p *Page) error {
@@ -50,9 +51,7 @@ func gitCommit(p *Page) error {
 
 	commit, err := w.Commit(p.Comment, &git.CommitOptions{
 		Author: &object.Signature{
-			Name:  "John Doe",
-			Email: "john@doe.org",
-			When:  time.Now(),
+			When: time.Now(),
 		},
 	})
 
@@ -100,6 +99,7 @@ func getGitHistory(p *Page) ([]*History, error) {
 		return nil, err
 	}
 	var histories []*History
+
 	// ... just iterates over the commits, printing it
 	err = cIter.ForEach(filterByChangesToPath(r, p.RelativePath(), func(c *object.Commit) error {
 		y, m, d := c.Author.When.Date()
@@ -109,6 +109,7 @@ func getGitHistory(p *Page) ([]*History, error) {
 			c.Author.Email,
 			c.Author.Name,
 			fmt.Sprintf("%d %s,%d", d, time.Month(m).String(), y),
+			c.Author.When.Format("2006-01-02 15:04:05"),
 		})
 		return nil
 	}))
@@ -136,6 +137,7 @@ func getGitLog() ([]*History, error) {
 			c.Author.Email,
 			c.Author.Name,
 			fmt.Sprintf("%d %s,%d", d, time.Month(m).String(), y),
+			c.Author.When.Format("2006-01-02 15:04:05"),
 		})
 		return nil
 	})

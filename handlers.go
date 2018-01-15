@@ -48,13 +48,21 @@ func detailHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	p := NewHomePage(vars["page"], "", "")
+	histories, err := getGitHistory(p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	data := struct {
-		Title string
-		Body  string
+		Title      string
+		Body       string
+		LastCommit *History
 	}{
 		vars["page"],
 		string(b),
+		histories[0],
 	}
 
 	renderer.HTML(w, http.StatusOK, "show_page", data)
