@@ -2,14 +2,15 @@
 <hr/>
 <div class="card" style="background-color: #fafafa;">
   <div class="card-block">
-    <h3 class="card-title">{{.}}</h3>
-    <form action="/create/{{.}}" method="POST">
+    <b class="card-title" style="border: 1px solid rgba(0,0,0,.125); background-color: #fff; padding: 6px 12px; border-radius: 4px;">{{.FileName}}</b>
+    <div class="card-title float-right" style="font-size: 12px"><b>Note:</b> This file will be created within the <b>"{{.Dir}}"</b> directory</div>
+    <form action="/create/{{.AbsolutePath}}" method="POST">
       <div class="form-group">
         <textarea rows="5" name="content" class="form-control"></textarea>
       </div>
 
       <div class="form-group">
-        <input name="comment" class="form-control" value="Created {{.}}"></input>
+        <input name="comment" class="form-control" value="Created {{.FileName}}"></input>
       </div>
 
       <button type="submit" class="btn btn-primary"> Save </button>
