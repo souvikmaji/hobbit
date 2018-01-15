@@ -1,12 +1,12 @@
 <div>
-  <div style="display: inline-block"><h1>{{.Title}}</h1></div>
-  <a class="btn btn-primary float-right title-button" href="/latest_changes">Latest Changes</a>
-  <a class="btn btn-primary float-right title-button" href="/history/{{.Title}}">History</a>
-  <a class="btn btn-primary float-right title-button" href="/edit/{{.Title}}">Edit</a>
-  <a class="btn btn-primary float-right title-button" href="#">Rename</a>
-  <a class="btn btn-primary float-right title-button" href="#" id="new-page">New</a>
-  <a class="btn btn-primary float-right title-button" href="#">All</a>
-  <a class="btn btn-primary float-right title-button" href="#">Home</a>
+  <div style="display: inline-block"><h2>{{.AbsolutePath}}</h2></div>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/latest_changes">Latest Changes</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/history/{{.AbsolutePath}}">History</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/edit/{{.AbsolutePath}}">Edit</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="#">Rename</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="#" id="new-page">New</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="#">All</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/">Home</a>
 </div>
 
 <hr/>
