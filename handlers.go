@@ -66,9 +66,9 @@ func detailHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title      string
-		Body       string
-		LastCommit *History
+		AbsolutePath string
+		Body         string
+		LastCommit   *History
 	}{
 		vars["page"],
 		string(b),
@@ -79,7 +79,6 @@ func detailHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func editPageHandler(w http.ResponseWriter, r *http.Request) {
-
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -92,10 +91,12 @@ func editPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := struct {
-		Title string
-		Body  string
+		FileName     string
+		AbsolutePath string
+		Body         string
 	}{
 		strings.Split(vars["page"], "/")[len(strings.Split(vars["page"], "/"))-1],
+		vars["page"],
 		string(b),
 	}
 
@@ -134,9 +135,11 @@ func historyPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Title     string
-		Histories []*History
+		FileName     string
+		AbsolutePath string
+		Histories    []*History
 	}{
+		strings.Split(vars["page"], "/")[len(strings.Split(vars["page"], "/"))-1],
 		vars["page"],
 		histories,
 	}
@@ -161,7 +164,6 @@ func pagesHandler(w http.ResponseWriter, r *http.Request) {
 	for _, page := range pages {
 		fmt.Printf("%#v", page)
 	}
-
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {

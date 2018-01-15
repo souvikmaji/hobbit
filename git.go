@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/go-ini/ini"
 
 	git "gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
@@ -48,9 +51,20 @@ func gitCommit(p *Page) error {
 	}
 
 	fmt.Println(status)
-
+	gitCfg, err := ini.InsensitiveLoad(filepath.Join(cfg.RepositoryRoot, ".git/config"))
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	name := "Anonymous"
+	user := gitCfg.Section("user")
+	iniName, _ := user.GetKey("Name")
+	if iniName != nil {
+		name = iniName.Value()
+	}
 	commit, err := w.Commit(p.Comment, &git.CommitOptions{
 		Author: &object.Signature{
+			Name: name,
 			When: time.Now(),
 		},
 	})
