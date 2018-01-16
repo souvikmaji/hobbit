@@ -30,7 +30,7 @@ func newPageHandler(w http.ResponseWriter, r *http.Request) {
 	}{
 		splat[len(splat)-1],
 		fmt.Sprintf("/%s", strings.Join(splat[:len(splat)-1], "/")),
-		splat[len(splat)-1],
+		vars["page"],
 	}
 	renderer.HTML(w, http.StatusOK, "new_page", data)
 }
