@@ -53,15 +53,34 @@ func createPageHandler(w http.ResponseWriter, r *http.Request) {
 
 func detailHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
+	splat := strings.Split(vars["page"], "/")
+	commitHash := splat[len(splat)-1]
+	// check if the commit hash exist against the file name
+	content, history, err := getContentByHash(strings.Join(splat[:len(splat)-1], "/"), commitHash)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	p := NewHomePage(vars["page"], "", "")
-	histories, err := getGitHistory(p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// if commit doesn't exist, check if the file exist against the path.
+		b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
+		if err != nil {
+			// if file doesn't exist, create a file with the given path
+			http.Redirect(w, r, fmt.Sprintf("/create/%s", vars["page"]), http.StatusFound)
+			return
+		}
+		p := NewHomePage(vars["page"], "", "")
+		histories, err := getGitHistory(p)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		data := struct {
+			AbsolutePath string
+			Body         string
+			LastCommit   *History
+		}{
+			vars["page"],
+			string(b),
+			histories[0],
+		}
+		renderer.HTML(w, http.StatusOK, "show_page", data)
 		return
 	}
 
@@ -70,12 +89,13 @@ func detailHandler(w http.ResponseWriter, r *http.Request) {
 		Body         string
 		LastCommit   *History
 	}{
-		vars["page"],
-		string(b),
-		histories[0],
+		strings.Join(splat[:len(splat)-1], "/"),
+		content,
+		history,
 	}
 
 	renderer.HTML(w, http.StatusOK, "show_page", data)
+
 }
 
 func editPageHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"path/filepath"
@@ -14,8 +15,10 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
+//History contains git history related fields
 type History struct {
 	ShortHash string
+	Hash      string
 	Message   string
 	Email     string
 	Name      string
@@ -23,9 +26,47 @@ type History struct {
 	TimeStamp string
 }
 
+func getContentByHash(file, hash string) (string, *History, error) {
+	if file == "" {
+		return "", nil, errors.New("not a commit")
+	}
+	r, err := git.PlainOpen(cfg.RepositoryRoot)
+	if err != nil {
+		log.Println(err)
+		return "", nil, err
+	}
+	commit, err := r.CommitObject(plumbing.NewHash(hash))
+
+	if err != nil {
+		log.Println(err)
+		return "", nil, err
+	}
+	f, err := commit.File(fmt.Sprintf("%s.md", file))
+	fmt.Println("file", file)
+	if err != nil {
+		log.Println(err)
+		return "", nil, err
+	}
+	content, err := f.Contents()
+	if err != nil {
+		log.Println(err)
+		return "", nil, err
+	}
+	y, m, d := commit.Author.When.Date()
+	history := &History{
+		commit.Hash.String()[:7],
+		commit.Hash.String(),
+		commit.Message,
+		commit.Author.Email,
+		commit.Author.Name,
+		fmt.Sprintf("%d %s,%d", d, time.Month(m).String(), y),
+		commit.Author.When.Format("2006-01-02 15:04:05"),
+	}
+	return content, history, nil
+}
+
 func gitCommit(p *Page) error {
 
-	// Opens an already existent repository.
 	r, err := git.PlainOpen(cfg.RepositoryRoot)
 	if err != nil {
 		log.Println(err)
@@ -119,6 +160,7 @@ func getGitHistory(p *Page) ([]*History, error) {
 		y, m, d := c.Author.When.Date()
 		histories = append(histories, &History{
 			c.Hash.String()[:7],
+			c.Hash.String(),
 			c.Message,
 			c.Author.Email,
 			c.Author.Name,
@@ -147,6 +189,7 @@ func getGitLog() ([]*History, error) {
 		y, m, d := c.Author.When.Date()
 		histories = append(histories, &History{
 			c.Hash.String()[:7],
+			c.Hash.String(),
 			c.Message,
 			c.Author.Email,
 			c.Author.Name,
