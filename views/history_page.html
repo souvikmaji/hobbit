@@ -1,27 +1,18 @@
+{{$absPath := .AbsolutePath}}
 <div>
   <div style="display: inline-block"><h2>History for {{.FileName}}</h2></div>
-  <a class="btn btn-primary btn-sm float-right title-button" href="/edit/{{.AbsolutePath}}">Edit</a>
-  <a class="btn btn-primary btn-sm float-right title-button" href="/{{.AbsolutePath}}">View Page</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/edit/{{$absPath}}">Edit</a>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/{{$absPath}}">View Page</a>
 </div>
 
 <hr/>
 
 <table class="table table-bordered">
-  <thead>
-    <tr>
-      <th scope="col">Name</th>
-      <th scope="col">Comment</th>
-      <th scope="col">Commit #</th>
-      <th scope="col">Last Edited</th>
-    </tr>
-  </thead>
   <tbody>
     {{ range .Histories}}
     <tr>
       <th scope="row">{{.Name}}</th>
-      <td>{{.Message}}</td>
-      <td>{{.ShortHash}}</td>
-      <td>{{.Time}}</td>
+      <td>{{.Time}}: {{.Message}} [<a href="/{{$absPath}}/{{.Hash}}">{{.ShortHash}}</a>]</td>
     </tr>
     {{end}}
   </tbody>
