@@ -21,6 +21,7 @@ func setupRoutes(c *Config) http.Handler {
 	r.HandleFunc("/pages", pagesHandler).Methods("GET")
 	r.HandleFunc("/pages/{page:.*}", pageHandler).Methods("GET")
 	r.HandleFunc("/{page:.*}", detailHandler).Methods("GET")
+	r.HandleFunc("/delete/{page:.*}", deleteHandler).Methods("POST")
 
 	return r
 }

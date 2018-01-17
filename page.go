@@ -52,7 +52,7 @@ func (p *Page) Save(cfg *Config) error {
 	if err != nil {
 		return err
 	}
-	err = gitCommit(p)
+	err = gitCommit(p, false)
 	if err != nil {
 		return err
 	}

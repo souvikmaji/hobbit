@@ -65,7 +65,7 @@ func getContentByHash(file, hash string) (string, *History, error) {
 	return content, history, nil
 }
 
-func gitCommit(p *Page) error {
+func gitCommit(p *Page, delete bool) error {
 
 	r, err := git.PlainOpen(cfg.RepositoryRoot)
 	if err != nil {
@@ -78,11 +78,18 @@ func gitCommit(p *Page) error {
 		log.Println(err)
 		return err
 	}
-
 	_, err = w.Add(p.RelativePath())
 	if err != nil {
 		log.Println(err)
 		return err
+	}
+	if delete == true {
+		_, err = w.Remove(p.RelativePath())
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
 	}
 
 	status, err := w.Status()

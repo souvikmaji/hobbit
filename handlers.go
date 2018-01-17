@@ -189,17 +189,39 @@ func pagesHandler(w http.ResponseWriter, r *http.Request) {
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		rootHandler(w, r)
+		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 	vars := mux.Vars(r)
 	pages, err := getPage(vars["page"])
 	if err != nil {
-		rootHandler(w, r)
+		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 	for _, page := range pages {
 		fmt.Printf("%#v", page)
 	}
+
+}
+
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	vars := mux.Vars(r)
+	// err = os.Remove(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", vars["page"])))
+	// if err != nil {
+	// 	http.Redirect(w, r, "/", http.StatusFound)
+	// 	return
+	// }
+	p := NewHomePage(vars["page"], r.PostFormValue("content"), fmt.Sprintf("Destroyed %s", strings.Split(vars["page"], "/")[len(strings.Split(vars["page"], "/"))-1]))
+	err = gitCommit(p, true)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/", http.StatusFound)
 
 }
