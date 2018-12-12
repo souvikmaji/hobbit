@@ -69,7 +69,7 @@ func (p *Page) Dir(cfg *Config) string {
 }
 
 func (p *Page) FileName() string {
-	return fmt.Sprintf("%s.md", titleToFileName(p.Title()))
+	return fmt.Sprintf("%s", titleToFileName(p.Title()))
 }
 
 func (p *Page) Path(cfg *Config) string {

@@ -1,0 +1,18 @@
+<div>
+  <div style="display: inline-block"><h2>All pages in master</h2></div>
+  <a class="btn btn-primary btn-sm float-right title-button" href="/">Home</a>
+</div>
+
+<hr/>
+<h6> Home </h6>
+<hr/>
+
+{{$abs := .Path}}
+
+{{range .Pages}}
+  {{if .IsDir}}
+    <div> <i class="fa fa-folder"></i> <a href="/pages{{$abs}}/{{.Name}}">{{.Name}}</a></div>
+  {{else}}
+    <div> <i class="fa fa-file"></i> <a href="{{$abs}}/{{.Name}}">{{.Name}}</a></div>
+  {{end}}
+{{end}}

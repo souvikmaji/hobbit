@@ -12,7 +12,7 @@ import (
 )
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	if _, err := os.Stat(filepath.Join(cfg.RepositoryRoot, "Home.md")); os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(cfg.RepositoryRoot, "Home")); os.IsNotExist(err) {
 		fmt.Println(err)
 		http.Redirect(w, r, "/create/Home", http.StatusFound)
 		return
@@ -59,7 +59,7 @@ func detailHandler(w http.ResponseWriter, r *http.Request) {
 	content, history, err := getContentByHash(strings.Join(splat[:len(splat)-1], "/"), commitHash)
 	if err != nil {
 		// if commit doesn't exist, check if the file exist against the path.
-		b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
+		b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s", titleToFileName(vars["page"])))) // just pass the file name
 		if err != nil {
 			// if file doesn't exist, create a file with the given path
 			http.Redirect(w, r, fmt.Sprintf("/create/%s", vars["page"]), http.StatusFound)
@@ -105,7 +105,7 @@ func editPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	vars := mux.Vars(r)
-	b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s.md", titleToFileName(vars["page"])))) // just pass the file name
+	b, err := ioutil.ReadFile(filepath.Join(cfg.RepositoryRoot, fmt.Sprintf("%s", titleToFileName(vars["page"])))) // just pass the file name
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -181,9 +181,16 @@ func pagesHandler(w http.ResponseWriter, r *http.Request) {
 		rootHandler(w, r)
 		return
 	}
-	for _, page := range pages {
-		fmt.Printf("%#v", page)
+
+	data := struct {
+		Pages []*GitPage
+		Path string
+	}{
+		pages,
+		"",
 	}
+
+	renderer.HTML(w, http.StatusOK, "all_pages", data)
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
@@ -198,10 +205,16 @@ func pageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	for _, page := range pages {
-		fmt.Printf("%#v", page)
+
+	data := struct {
+		Pages []*GitPage
+		Path string
+	}{
+		pages,
+		"/" + vars["page"],
 	}
 
+	renderer.HTML(w, http.StatusOK, "all_pages", data)
 }
 
 func deleteHandler(w http.ResponseWriter, r *http.Request) {

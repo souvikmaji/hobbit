@@ -41,7 +41,7 @@ func getContentByHash(file, hash string) (string, *History, error) {
 		log.Println(err)
 		return "", nil, err
 	}
-	f, err := commit.File(fmt.Sprintf("%s.md", file))
+	f, err := commit.File(fmt.Sprintf("%s", file))
 	fmt.Println("file", file)
 	if err != nil {
 		log.Println(err)
