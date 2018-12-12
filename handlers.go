@@ -23,6 +23,12 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 func newPageHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	splat := strings.Split(vars["page"], "/")
+
+	if stat, _ := os.Stat(filepath.Join(cfg.RepositoryRoot, vars["page"])); stat != nil {
+		http.Redirect(w, r, fmt.Sprintf("/%s", vars["page"]), http.StatusSeeOther)
+		return
+	}
+
 	data := struct {
 		FileName     string
 		Dir          string
